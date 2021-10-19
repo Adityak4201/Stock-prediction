@@ -5,4 +5,4 @@ NN Model
 ML
 AI
 
-## [visit project](https://colab.research.google.com/drive/1owZF8D7mt8bMCIPSiS6vLaWRlpoZ3Qfz?usp=sharing)
+## [visit project](https://colab.research.google.com/drive/1Q5-0SFNuEiTVCnPpPq8R6PISm5OKjLuJ?usp=sharing)
