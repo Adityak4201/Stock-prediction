@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
+from model import *
 import os
 
 UPLOAD_FOLDER = '../datasets'
@@ -24,17 +25,24 @@ def upload():
             response = {'error': 'Upload a file!!'}
             return response, 403
 
-        f = request.files['file']
+        f0 = request.files['file-0']
+        f1 = request.files['file-1']
 
-        if f.filename.rsplit('.', 1)[1].lower() != 'csv':
+        if f0.filename.rsplit('.', 1)[1].lower() != 'csv' or f1.filename.rsplit('.', 1)[1].lower() != 'csv':
             response = {'error': 'Only csv files are allowed'}
             return response, 406
 
-        filename = secure_filename(f.filename)
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        filename0 = secure_filename(f0.filename)
+        filename1 = secure_filename(f1.filename)
 
+        filepath0 = os.path.join(app.config['UPLOAD_FOLDER'], filename0)
+        filepath1 = os.path.join(app.config['UPLOAD_FOLDER'], filename1)
+        f0.save(filepath0)
+        f1.save(filepath1)
+
+        d = stockModel(filepath0, filepath1)
         response = {'msg': 'File Uploaded Successfully'}
-        return response
+        return d
 
 
 if(__name__ == '__main__'):
