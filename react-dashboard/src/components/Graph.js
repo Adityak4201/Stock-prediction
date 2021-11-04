@@ -2,6 +2,7 @@ import React from "react";
 import {
   LineChart,
   Line,
+  Label,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -36,22 +37,20 @@ const Graph = ({ data }) => {
   return (
     <div className="graph-container">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={data_mapped}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart width={500} height={450} data={data_mapped}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" minTickGap={40} />
-          <YAxis />
+          <XAxis dataKey="date" minTickGap={40}>
+            <Label value="Date" offset={-3} position="insideBottom" />
+          </XAxis>
+          <YAxis
+            label={{
+              value: "Value (in Rs.)",
+              angle: -90,
+              position: "insideLeft",
+            }}
+          />
           <Tooltip />
-          <Legend verticalAlign="top" height={36} />
+          <Legend verticalAlign="top" height={30} />
           <Line type="monotone" dataKey="real" stroke="#b91c65" dot={false} />
           <Line
             type="monotone"
