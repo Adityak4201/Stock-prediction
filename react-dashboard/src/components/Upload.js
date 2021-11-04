@@ -1,10 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import axios from "axios";
+
+const Alert = forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const Upload = () => {
   const [selectedFile, setSelectedFile] = useState([]);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const handleUpload = () => {
     const formData = new FormData();
@@ -19,8 +34,8 @@ const Upload = () => {
         formData
       )
       .then((res) => {
-        console.log(res.data.real);
-        console.log(res.data.predicted);
+        console.log(res.data);
+        // console.log(res.data);
         setSuccess("File uploaded successfully!!");
       })
       .catch((err) => {
@@ -29,15 +44,18 @@ const Upload = () => {
         else if (err.response.status === 406) setError(err.response.data.error);
         else setError("Server isn't responding!! Please try again later");
       });
+    setOpen(true);
   };
 
   useEffect(() => {
     console.log(selectedFile[0]);
   }, [selectedFile]);
 
+  const vertical = "top",
+    horizontal = "center";
+
   return (
     <div>
-      <p>{error ? error : success}</p>
       <label htmlFor="upload">Upload Files:</label>&nbsp;
       <input
         name="Upload"
@@ -46,6 +64,30 @@ const Upload = () => {
         multiple
       />
       <input type="button" value="Upload Files" onClick={handleUpload} />
+      {error && (
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical, horizontal }}
+        >
+          <Alert onClose={handleClose} severity="error">
+            {error}
+          </Alert>
+        </Snackbar>
+      )}
+      {success && (
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical, horizontal }}
+        >
+          <Alert onClose={handleClose} severity="success">
+            {success}
+          </Alert>
+        </Snackbar>
+      )}
     </div>
   );
 };

@@ -13,7 +13,21 @@ from keras.layers import Dropout
 
 def stockModel(file, file2):
 
-    df = pd.read_csv(file, index_col='Date', parse_dates=True)
+    file_read1 = pd.read_csv(file, index_col='Date', parse_dates=True)
+
+    file_read2 = pd.read_csv(file2, index_col="Date", parse_dates=True)
+
+    df = None
+    df_test = None
+
+    if len(file_read1.index) > len(file_read2.index):
+        df = file_read1
+        df_test = file_read2
+
+    else:
+        df = file_read2
+        df_test = file_read1
+
     df.head()
 
     df.isna().any()
@@ -94,8 +108,6 @@ def stockModel(file, file2):
 
     # """## Task 6: Visualization """
 
-    df_test = pd.read_csv(file2, index_col="Date", parse_dates=True)
-
     real_stock_price = df_test.iloc[:, 1:2].values
     type(real_stock_price)
 
@@ -103,15 +115,16 @@ def stockModel(file, file2):
 
     df_test.info()
 
-    df["Open"] = df["Open"].astype(float)
-    df["Close"] = df["Close"].astype(float)
-    df["High"] = df["High"].astype(float)
-    df["Low"] = df["Low"].astype(float)
-    df["Volume"] = df["Volume"].astype(float)
+    df_test["Open"] = df_test["Open"].astype(float)
+    df_test["Close"] = df_test["Close"].astype(float)
+    df_test["High"] = df_test["High"].astype(float)
+    df_test["Low"] = df_test["Low"].astype(float)
+    df_test["Volume"] = df_test["Volume"].astype(float)
 
     df_test.dropna(inplace=True)
 
     test_set = df_test['Open']
+    df_test['Date'] = df_test.index
     test_set = pd.DataFrame(test_set)
 
     test_set.info()
@@ -130,12 +143,16 @@ def stockModel(file, file2):
     predicted_stock_price = sc.inverse_transform(predicted_stock_price)
 
     predicted_stock_price = pd.DataFrame(predicted_stock_price)
-    predicted_stock_price = predicted_stock_price.to_json()
-    real_stock_price = pd.DataFrame(real_stock_price, columns=['Open']).to_json()
-    
-    d = {'real': None, 'predicted': None}
+    real_stock_price = pd.DataFrame(real_stock_price, columns=['Open'])
+    print(predicted_stock_price)
+    print(real_stock_price)
+    predicted_stock_price = predicted_stock_price[0].tolist()
+    real_stock_price = real_stock_price['Open'].tolist()
+
+    d = {'real': None, 'predicted': None, 'date': None}
     d['real'] = real_stock_price
     d['predicted'] = predicted_stock_price
+    d['date'] = df_test['Date'].tolist()
 
     return d
 
